@@ -59,15 +59,28 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
           {project.title}
         </h2>
 
-        {/* Main Image Banner */}
-        <div className="relative w-full h-[320px] sm:h-[450px] md:h-[520px] rounded-2xl overflow-hidden mb-8 border border-[#D3D0C6]">
-          <Image
-            src={project.image}
-            alt={project.title}
-            fill
-            className="object-cover"
-            priority
-          />
+        {/* Main Media Banner (Video or Image) */}
+        <div className="relative w-full h-[320px] sm:h-[450px] md:h-[520px] rounded-2xl overflow-hidden mb-8 border border-[#D3D0C6] bg-[#111110]">
+          {project.video ? (
+            <video
+              src={project.video}
+              poster={project.image}
+              autoPlay
+              loop
+              muted
+              playsInline
+              controls
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          )}
         </div>
 
         {/* Editorial Details & Specifications */}
@@ -126,7 +139,19 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
               </div>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col gap-2.5">
+              {project.link && (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 bg-[#22221F] text-[#F2F0E8] text-xs font-semibold tracking-wider uppercase rounded-full hover:bg-black transition-all shadow-sm group"
+                >
+                  <span>Watch / View Live Project</span>
+                  <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </a>
+              )}
+
               <a
                 href="#contact"
                 onClick={onClose}

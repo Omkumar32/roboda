@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import { ArrowUpRight, Mail, MapPin, Send, CheckCircle2 } from "lucide-react";
 import { InstagramIcon } from "./SocialIcons";
 import { CONTACT_INFO } from "@/data/portfolioData";
+import { usePortfolio } from "@/context/PortfolioDataContext";
 
 export default function Contact() {
+  const { data } = usePortfolio();
+  const contact = data?.contact || CONTACT_INFO;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,11 +17,34 @@ export default function Contact() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email) return;
-    setSubmitted(true);
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.error || "Failed to submit inquiry.");
+      }
+
+      setSubmitted(true);
+    } catch (err: any) {
+      setSubmitError(err?.message || "Failed to send message. Please try again or email directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -51,7 +77,7 @@ export default function Contact() {
               {/* Direct Info Card Grid */}
               <div className="mt-10 sm:mt-14 space-y-4 pt-8 border-t border-[#D3D0C6]">
                 <a
-                  href={`mailto:${CONTACT_INFO.email}`}
+                  href={`mailto:${contact.email}`}
                   className="flex items-center gap-3.5 p-3.5 rounded-xl bg-[#E8E5DA] hover:bg-[#D5D0C3] text-[#22221F] border border-[#D3D0C6] transition-colors group"
                 >
                   <div className="w-10 h-10 rounded-lg bg-[#596637] text-[#F2F0E8] flex items-center justify-center shrink-0">
@@ -62,29 +88,31 @@ export default function Contact() {
                       Direct Inquiries
                     </p>
                     <p className="text-sm font-semibold truncate group-hover:text-[#596637] transition-colors">
-                      {CONTACT_INFO.email}
+                      {contact.email}
                     </p>
                   </div>
                 </a>
 
-                <a
-                  href={CONTACT_INFO.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3.5 p-3.5 rounded-xl bg-[#E8E5DA] hover:bg-[#D5D0C3] text-[#22221F] border border-[#D3D0C6] transition-colors group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-[#596637] text-[#F2F0E8] flex items-center justify-center shrink-0">
-                    <InstagramIcon className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-mono tracking-widest text-[#77766F] uppercase">
-                      Visual Journal
-                    </p>
-                    <p className="text-sm font-semibold truncate group-hover:text-[#596637] transition-colors">
-                      {CONTACT_INFO.instagram}
-                    </p>
-                  </div>
-                </a>
+                {contact.instagramUrl && (
+                  <a
+                    href={contact.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3.5 p-3.5 rounded-xl bg-[#E8E5DA] hover:bg-[#D5D0C3] text-[#22221F] border border-[#D3D0C6] transition-colors group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-[#596637] text-[#F2F0E8] flex items-center justify-center shrink-0">
+                      <InstagramIcon className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-mono tracking-widest text-[#77766F] uppercase">
+                        Visual Journal
+                      </p>
+                      <p className="text-sm font-semibold truncate group-hover:text-[#596637] transition-colors">
+                        {contact.instagram}
+                      </p>
+                    </div>
+                  </a>
+                )}
 
                 <div className="flex items-center gap-3.5 p-3.5 rounded-xl bg-[#E8E5DA] border border-[#D3D0C6] text-[#22221F]">
                   <div className="w-10 h-10 rounded-lg bg-[#596637] text-[#F2F0E8] flex items-center justify-center shrink-0">
@@ -95,7 +123,7 @@ export default function Contact() {
                       Studio Location
                     </p>
                     <p className="text-xs sm:text-sm font-semibold text-[#22221F]">
-                      {CONTACT_INFO.location} · {CONTACT_INFO.availability}
+                      {contact.location} · {contact.availability}
                     </p>
                   </div>
                 </div>
@@ -219,13 +247,29 @@ export default function Contact() {
                     />
                   </div>
 
+                  {submitError && (
+                    <div className="p-3 bg-red-100 border border-red-300 rounded-xl text-xs text-red-700">
+                      {submitError}
+                    </div>
+                  )}
+
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="group w-full py-4 px-8 bg-[#596637] text-[#F2F0E8] font-semibold text-sm sm:text-base tracking-wider uppercase rounded-full shadow-sm hover:bg-[#4a552e] hover:shadow-md transition-all duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#596637] focus:ring-offset-2"
+                      disabled={isSubmitting}
+                      className="group w-full py-4 px-8 bg-[#596637] text-[#F2F0E8] font-semibold text-sm sm:text-base tracking-wider uppercase rounded-full shadow-sm hover:bg-[#4a552e] hover:shadow-md transition-all duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#596637] focus:ring-offset-2 disabled:opacity-60 cursor-pointer"
                     >
-                      <span>Let&apos;s Talk</span>
-                      <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-[#F2F0E8] border-t-transparent rounded-full animate-spin" />
+                          <span>Sending Inquiry...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Let&apos;s Talk</span>
+                          <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        </>
+                      )}
                     </button>
                   </div>
 

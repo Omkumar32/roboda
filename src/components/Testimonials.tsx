@@ -9,12 +9,27 @@ export default function Testimonials() {
     <section className="w-full py-16 sm:py-24 px-4 sm:px-8 md:px-12 bg-[#E8E5DA]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center max-w-xl mx-auto mb-12 sm:mb-16">
-          <p className="text-xs font-semibold tracking-[0.25em] text-[#77766F] uppercase mb-3">
-            WORDS FROM COLLABORATORS
-          </p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#22221F]">
-            Praise & Perspectives.
+        <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-16 flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 mb-2 sm:mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#596637]" />
+            <span className="text-xs font-semibold tracking-[0.2em] text-[#22221F] uppercase">
+              WORDS FROM COLLABORATORS
+            </span>
+          </div>
+          <h2 className="select-none flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 leading-none tracking-tight my-1 sm:my-2">
+            <span className="font-sans font-black text-[#22221F] text-3xl sm:text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight">
+              PRAISE &amp;
+            </span>
+            <span
+              className="font-sans font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight transition-all duration-300 hover:scale-[1.02] cursor-default"
+              style={{
+                WebkitTextStroke: "2px #596637",
+                color: "rgba(89, 102, 55, 0.18)",
+                opacity: 0.95,
+              }}
+            >
+              PERSPECTIVES
+            </span>
           </h2>
         </div>
 

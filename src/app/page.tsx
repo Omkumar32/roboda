@@ -3,7 +3,6 @@ import SelectedWork from "@/components/SelectedWork";
 import VisualDesigns from "@/components/VisualDesigns";
 import About from "@/components/About";
 import Services from "@/components/Services";
-import Process from "@/components/Process";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -25,9 +24,6 @@ export default function Home() {
 
       {/* 4. Services Section */}
       <Services />
-
-      {/* 5. Creative Process Section */}
-      <Process />
 
       {/* 6. Testimonials Section */}
       <Testimonials />

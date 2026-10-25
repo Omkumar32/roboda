@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, ArrowUpRight } from "lucide-react";
+import Social3DButtons from "./Social3DButtons";
 
 interface NavbarProps {
   activeSection?: string;
@@ -89,8 +90,12 @@ export default function Navbar({ activeSection = "home" }: NavbarProps) {
           })}
         </nav>
 
-        {/* Right Side: Quick Action & Hamburger */}
+        {/* Right Side: Quick Action & Socials & Hamburger */}
         <div className="flex items-center gap-3 sm:gap-4">
+          <div className="hidden lg:flex items-center mr-1">
+            <Social3DButtons />
+          </div>
+
           <a
             href="#contact"
             onClick={(e) => handleLinkClick(e, "#contact")}
@@ -133,6 +138,9 @@ export default function Navbar({ activeSection = "home" }: NavbarProps) {
               </a>
             ))}
             <div className="pt-4 flex flex-col gap-3">
+              <div className="flex justify-center py-2 border-b border-[#D3D0C6]/40">
+                <Social3DButtons />
+              </div>
               <a
                 href="#contact"
                 onClick={(e) => handleLinkClick(e, "#contact")}

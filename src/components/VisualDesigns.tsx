@@ -3,13 +3,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ArrowUpRight, Sparkles, X, Eye, Tag, Award } from "lucide-react";
-import { VISUAL_DESIGNS, VisualDesignItem } from "@/data/portfolioData";
+import { VisualDesignItem } from "@/data/portfolioData";
+import { usePortfolio } from "@/context/PortfolioDataContext";
 
 export default function VisualDesigns() {
+  const { data } = usePortfolio();
+  const visualDesigns = data?.visualDesigns || [];
   const [activeIndex, setActiveIndex] = useState(1);
   const [selectedDesign, setSelectedDesign] = useState<VisualDesignItem | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const total = VISUAL_DESIGNS.length;
+  const total = visualDesigns.length || 1;
+
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   const nextSlide = () => {
     setActiveIndex((prev) => (prev + 1) % total);
@@ -17,6 +22,33 @@ export default function VisualDesigns() {
 
   const prevSlide = () => {
     setActiveIndex((prev) => (prev - 1 + total) % total);
+  };
+
+  // Smooth auto-swipe interval (pauses on hover or when modal is open)
+  useEffect(() => {
+    if (isHovered || selectedDesign !== null) return;
+
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % total);
+    }, 3200);
+
+    return () => clearInterval(timer);
+  }, [isHovered, selectedDesign, total]);
+
+  // Touch swipe gestures
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if (diff > 50) {
+      prevSlide();
+    } else if (diff < -50) {
+      nextSlide();
+    }
+    setTouchStartX(null);
   };
 
   // Keyboard navigation
@@ -72,35 +104,35 @@ export default function VisualDesigns() {
   return (
     <section
       id="visual-designs"
-      className="relative w-full py-20 sm:py-28 px-4 sm:px-8 md:px-12 bg-[#E8E5DA] text-[#22221F] overflow-hidden border-t border-[#D3D0C6]"
+      className="relative w-full min-h-[90vh] lg:min-h-screen py-8 sm:py-12 md:py-16 px-4 sm:px-8 md:px-12 bg-[#E8E5DA] text-[#22221F] overflow-hidden border-t border-[#D3D0C6] flex flex-col justify-center items-center"
     >
       {/* Subtle Atmospheric Glow Elements matching brand tones */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#596637]/10 blur-[130px] rounded-full pointer-events-none" />
       <div className="absolute -bottom-20 left-1/4 w-[400px] h-[250px] bg-[#D5D0C3]/40 blur-[100px] rounded-full pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto flex flex-col items-center text-center">
+      <div className="relative max-w-7xl mx-auto w-full flex flex-col items-center text-center">
         {/* Eyebrow Label: 05 • DESIGN PORTFOLIO */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#F2F0E8] border border-[#D3D0C6] mb-4 shadow-2xs">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#F2F0E8] border border-[#D3D0C6] mb-2 sm:mb-3 shadow-2xs">
           <span className="font-mono text-xs font-semibold tracking-[0.25em] text-[#596637] uppercase">
             05
           </span>
-          <span className="text-[#77766F] text-xs">•</span>
+          <span className="text-[#596637] text-xs">•</span>
           <span className="text-xs font-semibold tracking-[0.2em] text-[#22221F] uppercase">
             DESIGN PORTFOLIO
           </span>
         </div>
 
-        {/* Massive Editorial Headline: VISUAL (solid) / DESIGNS (stroke) */}
-        <div className="select-none flex flex-col items-center leading-[0.88] tracking-tight my-2">
-          <span className="font-sans font-black text-[#22221F] text-[clamp(3.5rem,11vw,8rem)] uppercase tracking-tight">
+        {/* Editorial Headline: VISUAL (solid) / DESIGNS (theme olive stroke & tint) on one unified line */}
+        <div className="select-none flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 leading-none tracking-tight my-1 sm:my-2">
+          <span className="font-sans font-black text-[#22221F] text-3xl sm:text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight">
             VISUAL
           </span>
           <span
-            className="font-sans font-black text-[clamp(3.5rem,11vw,8rem)] uppercase tracking-tight"
+            className="font-sans font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight transition-all duration-300 hover:scale-[1.02] cursor-default"
             style={{
-              WebkitTextStroke: "1.5px #22221F",
-              color: "transparent",
-              opacity: 0.3,
+              WebkitTextStroke: "2px #596637",
+              color: "rgba(89, 102, 55, 0.18)",
+              opacity: 0.95,
             }}
           >
             DESIGNS
@@ -108,26 +140,28 @@ export default function VisualDesigns() {
         </div>
 
         {/* Sub-bar Category Ticker */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[11px] sm:text-xs font-mono tracking-[0.25em] text-[#77766F] uppercase pt-4 pb-12 sm:pb-16 border-b border-[#D3D0C6] w-full max-w-4xl">
-          <span>BRAND KITS</span>
+        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-5 text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#77766F] uppercase pt-2 pb-3 sm:pb-4 border-b border-[#D3D0C6] w-full max-w-3xl mb-3 sm:mb-5">
+          <span className="hover:text-[#596637] transition-colors cursor-default">BRAND KITS</span>
           <span className="text-[#596637]">•</span>
-          <span>THUMBNAILS</span>
+          <span className="hover:text-[#596637] transition-colors cursor-default">THUMBNAILS</span>
           <span className="text-[#596637]">•</span>
-          <span>SOCIAL MEDIA</span>
+          <span className="hover:text-[#596637] transition-colors cursor-default">SOCIAL MEDIA</span>
           <span className="text-[#596637]">•</span>
-          <span>POSTERS</span>
+          <span className="hover:text-[#596637] transition-colors cursor-default">POSTERS</span>
           <span className="text-[#596637]">•</span>
-          <span>KEY VISUALS</span>
+          <span className="hover:text-[#596637] transition-colors cursor-default">KEY VISUALS</span>
         </div>
 
         {/* 3D Coverflow Carousel Stage */}
         <div
-          className="relative w-full h-[420px] sm:h-[480px] md:h-[540px] flex items-center justify-center perspective-[1200px] mt-6 sm:mt-10"
+          className="relative w-full h-[310px] sm:h-[360px] md:h-[400px] flex items-center justify-center perspective-[1200px]"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
-          <div className="relative w-full max-w-[540px] h-[300px] sm:h-[350px] md:h-[380px] flex items-center justify-center">
-            {VISUAL_DESIGNS.map((item, index) => {
+          <div className="relative w-full max-w-[500px] h-[250px] sm:h-[290px] md:h-[320px] flex items-center justify-center">
+            {visualDesigns.map((item, index) => {
               const isActive = index === activeIndex;
               const cardStyle = getCardStyle(index);
 
@@ -142,7 +176,7 @@ export default function VisualDesigns() {
                     }
                   }}
                   style={cardStyle}
-                  className={`absolute w-[320px] sm:w-[420px] md:w-[480px] h-[210px] sm:h-[265px] md:h-[295px] rounded-2xl overflow-hidden transition-all duration-500 ease-out select-none ${
+                  className={`absolute w-[290px] sm:w-[380px] md:w-[460px] h-[190px] sm:h-[240px] md:h-[280px] rounded-2xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] select-none ${
                     isActive
                       ? "ring-2 ring-[#596637] shadow-[0_16px_40px_rgba(89,102,55,0.28)]"
                       : "ring-1 ring-[#D3D0C6] shadow-sm hover:ring-[#77766F]"
@@ -163,37 +197,37 @@ export default function VisualDesigns() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
                     {/* Creative Typography Badge Overlay */}
-                    <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10 pointer-events-none">
-                      <div className="flex flex-col items-start bg-[#22221F]/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/15">
-                        <span className="text-[11px] sm:text-xs font-black tracking-wider text-[#F2F0E8] uppercase drop-shadow-md">
+                    <div className="absolute top-3.5 left-3.5 right-3.5 flex items-start justify-between z-10 pointer-events-none">
+                      <div className="flex flex-col items-start bg-[#22221F]/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/15">
+                        <span className="text-[10px] sm:text-xs font-black tracking-wider text-[#F2F0E8] uppercase drop-shadow-md">
                           {item.badgeTitle}
                         </span>
                         {item.badgeSubtitle && (
-                          <span className="text-[9px] font-bold tracking-widest text-[#D5D0C3] uppercase">
+                          <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-[#D5D0C3] uppercase">
                             {item.badgeSubtitle}
                           </span>
                         )}
                       </div>
 
-                      <span className="px-2.5 py-1 rounded-md text-[9px] font-mono tracking-wider uppercase bg-[#596637] text-[#F2F0E8] font-semibold shadow-xs">
+                      <span className="px-2.5 py-0.5 sm:py-1 rounded-md text-[9px] font-mono tracking-wider uppercase bg-[#596637] text-[#F2F0E8] font-semibold shadow-xs">
                         {item.category.split("&")[0]}
                       </span>
                     </div>
 
                     {/* Bottom Metadata */}
-                    <div className="absolute bottom-4 left-4 right-4 z-10 flex items-end justify-between">
-                      <div className="text-left">
+                    <div className="absolute bottom-3.5 left-3.5 right-3.5 z-10 flex items-end justify-between">
+                      <div className="text-left pr-2">
                         <p className="text-xs sm:text-sm font-bold text-white tracking-tight line-clamp-1 drop-shadow-sm">
                           {item.title}
                         </p>
-                        <p className="text-[11px] text-[#D5D0C3] font-mono mt-0.5">
+                        <p className="text-[10px] sm:text-[11px] text-[#D5D0C3] font-mono mt-0.5">
                           {item.viewsOrMetric}
                         </p>
                       </div>
 
                       {isActive && (
-                        <div className="w-8 h-8 rounded-full bg-[#596637] text-[#F2F0E8] flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                          <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#596637] text-[#F2F0E8] flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                          <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                         </div>
                       )}
                     </div>
@@ -207,7 +241,7 @@ export default function VisualDesigns() {
           <button
             onClick={prevSlide}
             aria-label="Previous slide"
-            className="absolute left-2 sm:left-8 md:left-16 z-30 p-3 rounded-full bg-[#F2F0E8] hover:bg-[#596637] hover:text-[#F2F0E8] text-[#22221F] border border-[#D3D0C6] shadow-md transition-all backdrop-blur-sm focus:outline-none"
+            className="absolute left-2 sm:left-6 md:left-12 lg:left-16 z-30 p-2.5 sm:p-3 rounded-full bg-[#F2F0E8] hover:bg-[#596637] hover:text-[#F2F0E8] text-[#22221F] border border-[#D3D0C6] shadow-md transition-all backdrop-blur-sm focus:outline-none"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -216,21 +250,21 @@ export default function VisualDesigns() {
           <button
             onClick={nextSlide}
             aria-label="Next slide"
-            className="absolute right-2 sm:right-8 md:right-16 z-30 p-3 rounded-full bg-[#F2F0E8] hover:bg-[#596637] hover:text-[#F2F0E8] text-[#22221F] border border-[#D3D0C6] shadow-md transition-all backdrop-blur-sm focus:outline-none"
+            className="absolute right-2 sm:right-6 md:right-12 lg:right-16 z-30 p-2.5 sm:p-3 rounded-full bg-[#F2F0E8] hover:bg-[#596637] hover:text-[#F2F0E8] text-[#22221F] border border-[#D3D0C6] shadow-md transition-all backdrop-blur-sm focus:outline-none"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
         {/* Carousel Slide Indicators & Hint */}
-        <div className="mt-8 flex flex-col items-center gap-3">
+        <div className="mt-4 sm:mt-6 flex flex-col items-center gap-2">
           <div className="flex items-center gap-2">
-            {VISUAL_DESIGNS.map((_, idx) => (
+            {visualDesigns.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
                 aria-label={`Go to slide ${idx + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
+                className={`h-1.5 rounded-full transition-all duration-500 ease-out cursor-pointer ${
                   idx === activeIndex
                     ? "w-8 bg-[#596637]"
                     : "w-2 bg-[#D3D0C6] hover:bg-[#77766F]"
@@ -318,10 +352,21 @@ export default function VisualDesigns() {
                     {selectedDesign.viewsOrMetric}
                   </span>
                 </div>
+                {selectedDesign.link && (
+                  <a
+                    href={selectedDesign.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 bg-[#22221F] text-[#F2F0E8] font-bold tracking-wider uppercase rounded-full text-center flex items-center justify-center gap-1.5 hover:bg-black transition-colors"
+                  >
+                    <span>View Project / Artwork ↗</span>
+                  </a>
+                )}
+
                 <a
                   href="#contact"
                   onClick={() => setSelectedDesign(null)}
-                  className="mt-3 w-full py-3 bg-[#596637] text-[#F2F0E8] font-bold tracking-wider uppercase rounded-full text-center flex items-center justify-center gap-1.5 hover:bg-[#4a552e] transition-colors"
+                  className="mt-2 w-full py-3 bg-[#596637] text-[#F2F0E8] font-bold tracking-wider uppercase rounded-full text-center flex items-center justify-center gap-1.5 hover:bg-[#4a552e] transition-colors"
                 >
                   <span>Request Custom Design</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />

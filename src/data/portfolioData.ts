@@ -5,14 +5,21 @@ export interface Project {
   year: string;
   filter: "all" | "films" | "portraits" | "brand" | "editorial";
   image: string;
-  aspect: "portrait" | "landscape" | "tall";
-  span: string; // Tailwind grid span
+  video?: string;
+  aspect: "portrait" | "landscape" | "tall" | "square";
+  aspectRatioClass: string;
+  span: string; // Tailwind grid span (backwards compatibility)
   synopsis: string;
   client: string;
   location: string;
   cameraGear: string;
   quote?: string;
   quoteAuthor?: string;
+  mediaType: "film" | "portrait" | "series" | "editorial" | "commercial";
+  mediaTag: string;
+  duration?: string;
+  likesCount: number;
+  link?: string;
 }
 
 export interface Service {
@@ -45,12 +52,17 @@ export const PROJECTS: Project[] = [
   {
     id: "the-wedding-story",
     title: "The Wedding Story",
-    category: "Cinematic Films & Editorial",
+    category: "Cinematic Film",
     year: "2024",
     filter: "films",
     image: "/images/work-wedding.jpg",
     aspect: "landscape",
+    aspectRatioClass: "aspect-[16/10]",
     span: "col-span-12 md:col-span-8",
+    mediaType: "film",
+    mediaTag: "▶ 4K CINEMA · 03:42",
+    duration: "03:42",
+    likesCount: 384,
     synopsis:
       "A quiet, poetic documentary of an intimate celebration in Udaipur. We prioritized unfiltered human warmth, spontaneous tears, and twilight light over orchestrated postures.",
     client: "Aanya & Kabir",
@@ -67,7 +79,11 @@ export const PROJECTS: Project[] = [
     filter: "portraits",
     image: "/images/work-faces.jpg",
     aspect: "portrait",
+    aspectRatioClass: "aspect-[3/4]",
     span: "col-span-12 md:col-span-4",
+    mediaType: "portrait",
+    mediaTag: "📷 HASSELBLAD 100MP",
+    likesCount: 528,
     synopsis:
       "A minimalist studio exploration of natural light and raw expression. Stripping away heavy styling to let human vulnerability and the eyes take center stage.",
     client: "Editorial Studio",
@@ -83,8 +99,13 @@ export const PROJECTS: Project[] = [
     year: "2023",
     filter: "editorial",
     image: "/images/work-motion.jpg",
-    aspect: "portrait",
+    video: "/videos/creative-fashion.mp4",
+    aspect: "tall",
+    aspectRatioClass: "aspect-[9/13]",
     span: "col-span-12 md:col-span-5",
+    mediaType: "series",
+    mediaTag: "❐ 8 FRAMES · EDITORIAL",
+    likesCount: 412,
     synopsis:
       "Capturing the fluid poetry of contemporary dance fused with sustainable haute couture. Slow shutter speeds and deliberate motion blur create impressionistic gestures.",
     client: "Aura Haute Atelier",
@@ -94,14 +115,41 @@ export const PROJECTS: Project[] = [
     quoteAuthor: "Priya Sen, Creative Director",
   },
   {
+    id: "tokyo-drift",
+    title: "Tokyo Midnight Run",
+    category: "Cinematic Motion",
+    year: "2024",
+    filter: "films",
+    image: "/images/designs/thumb-drift.jpg",
+    video: "/videos/bike-motion.mp4",
+    aspect: "landscape",
+    aspectRatioClass: "aspect-[16/9]",
+    span: "col-span-12 md:col-span-7",
+    mediaType: "film",
+    mediaTag: "▶ 4K 120FPS · 01:28",
+    duration: "01:28",
+    likesCount: 764,
+    synopsis:
+      "A neon-bathed nocturnal journey through the subterranean expressways of Shinjuku. High frame-rate captures of tire smoke, headlight trails, and asphalt reflections.",
+    client: "Kurogane Racing Club",
+    location: "Tokyo, Japan",
+    cameraGear: "RED Komodo 6K · 24mm Anamorphic T2.0",
+    quote: "The closest visual feeling to velocity frozen inside liquid amber.",
+    quoteAuthor: "Daisuke T., Director",
+  },
+  {
     id: "urban-frames",
-    title: "Urban Frames",
+    title: "Brutalist Monoliths",
     category: "Architecture & Street",
     year: "2024",
     filter: "editorial",
     image: "/images/work-urban.jpg",
-    aspect: "landscape",
+    aspect: "square",
+    aspectRatioClass: "aspect-square",
     span: "col-span-12 md:col-span-7",
+    mediaType: "editorial",
+    mediaTag: "✦ LEICA MONOCHROME",
+    likesCount: 319,
     synopsis:
       "A study of geometrical brutalism meeting morning golden light across South Mumbai. Juxtaposing colossal heritage stone facades with fleeting pedestrian silhouettes.",
     client: "Monochrome Review",
@@ -112,13 +160,17 @@ export const PROJECTS: Project[] = [
   },
   {
     id: "brand-in-focus",
-    title: "Brand in Focus",
+    title: "Terra Botanics Apothecary",
     category: "Brand Campaigns",
     year: "2023",
     filter: "brand",
     image: "/images/work-brand.jpg",
-    aspect: "landscape",
+    aspect: "portrait",
+    aspectRatioClass: "aspect-[4/5]",
     span: "col-span-12 md:col-span-7",
+    mediaType: "commercial",
+    mediaTag: "❐ CAMPAIGN · 12 ASSETS",
+    likesCount: 442,
     synopsis:
       "An understated visual narrative for an artisanal apothecary brand. Emphasizing tactile botanical textures, handcrafted amber glassware, and earthy palettes.",
     client: "Terra Botanics",
@@ -128,14 +180,39 @@ export const PROJECTS: Project[] = [
     quoteAuthor: "Rohan Kapoor, Founder",
   },
   {
+    id: "artisan-coffee",
+    title: "The Quiet Pour",
+    category: "Brand & Lifestyle",
+    year: "2024",
+    filter: "brand",
+    image: "/images/designs/thumb-coffee.jpg",
+    aspect: "portrait",
+    aspectRatioClass: "aspect-[3/4]",
+    span: "col-span-12 md:col-span-5",
+    mediaType: "commercial",
+    mediaTag: "☕ LIFESTYLE ESSAY",
+    likesCount: 521,
+    synopsis:
+      "A visual ode to slow drip espresso and handcrafted ceramic vessels in Higashiyama. Warm amber tones highlighting morning steam and single-origin roast textures.",
+    client: "Kissa Kurasu",
+    location: "Kyoto, Japan",
+    cameraGear: "Leica M11 · Summilux 50mm f/1.4",
+    quote: "Every frame makes you taste the quiet reverence of the first cup.",
+    quoteAuthor: "Specialty Coffee Magazine",
+  },
+  {
     id: "moments-unscripted",
-    title: "Moments Unscripted",
+    title: "Misty Heights of Nilgiris",
     category: "Documentary & Lifestyle",
     year: "2024",
     filter: "editorial",
     image: "/images/work-moments.jpg",
-    aspect: "portrait",
+    aspect: "tall",
+    aspectRatioClass: "aspect-[2/3]",
     span: "col-span-12 md:col-span-5",
+    mediaType: "editorial",
+    mediaTag: "🎞 KODAK PORTRA 400",
+    likesCount: 639,
     synopsis:
       "An organic visual journal across the misty tea estates of Nilgiris. Shot entirely with 35mm film emulation to preserve grain, nostalgic sun flares, and earthy tones.",
     client: "Personal Project",
@@ -143,6 +220,93 @@ export const PROJECTS: Project[] = [
     cameraGear: "Contax T2 · Kodak Portra 400 35mm",
     quote: "Photographs that smell of petrichor and early morning mist.",
     quoteAuthor: "Kunal S., Curator",
+  },
+  {
+    id: "festival-of-light",
+    title: "Lanterns of Solitude",
+    category: "Cinematic Film",
+    year: "2023",
+    filter: "films",
+    image: "/images/designs/thumb-festival.jpg",
+    aspect: "landscape",
+    aspectRatioClass: "aspect-[16/10]",
+    span: "col-span-12 md:col-span-6",
+    mediaType: "film",
+    mediaTag: "▶ 4K CINEMA · 02:15",
+    duration: "02:15",
+    likesCount: 890,
+    synopsis:
+      "Immersed in Chiang Mai's Yi Peng sky lantern ascension. Capturing thousands of buoyant paper luminaries floating into the midnight atmosphere.",
+    client: "Wanderlust Film Project",
+    location: "Chiang Mai, Thailand",
+    cameraGear: "Sony FX3 · 24mm f/1.4 GM",
+    quote: "A constellation storm drifting into the stars.",
+    quoteAuthor: "National Geographic Traveler",
+  },
+  {
+    id: "summer-respite",
+    title: "Golden Solitude",
+    category: "Portrait Photography",
+    year: "2024",
+    filter: "portraits",
+    image: "/images/designs/thumb-friend.jpg",
+    aspect: "portrait",
+    aspectRatioClass: "aspect-[4/5]",
+    span: "col-span-12 md:col-span-6",
+    mediaType: "portrait",
+    mediaTag: "📷 85MM NATURAL LIGHT",
+    likesCount: 476,
+    synopsis:
+      "Gentle portrait study capturing the golden twilight hour across coastal cliffs. Completely unscripted poses, natural hair caught in sea breeze, and warm skin undertones.",
+    client: "Private Collection",
+    location: "Algarve, Portugal",
+    cameraGear: "Sony A1 · FE 85mm f/1.4 GM",
+    quote: "Unpretentious, deeply genuine, and luminous.",
+    quoteAuthor: "Elle Editorial Review",
+  },
+  {
+    id: "coastal-solitude",
+    title: "Tides & Monoliths",
+    category: "Cinematic Film",
+    year: "2023",
+    filter: "films",
+    image: "/images/designs/thumb-pattaya.jpg",
+    video: "/videos/cinematic-reel.mp4",
+    aspect: "landscape",
+    aspectRatioClass: "aspect-[16/9]",
+    span: "col-span-12 md:col-span-6",
+    mediaType: "film",
+    mediaTag: "▶ ANAMORPHIC · 04:10",
+    duration: "04:10",
+    likesCount: 562,
+    synopsis:
+      "A visual exploration of coastal geography where limestone cliffs plunge into tropical turquoise surf. Atmospheric drone sequences juxtaposed with handheld macro surf swells.",
+    client: "Terra Incognita Docs",
+    location: "Andaman Coastline",
+    cameraGear: "DJI Inspire 3 · Zenmuse X9-8K Air",
+    quote: "Grandeur and tranquility woven into one seamless movement.",
+    quoteAuthor: "Cinematography World",
+  },
+  {
+    id: "metropolis-silhouettes",
+    title: "Midnight Walkers",
+    category: "Brand Campaigns",
+    year: "2024",
+    filter: "brand",
+    image: "/images/designs/thumb-shopping.jpg",
+    aspect: "portrait",
+    aspectRatioClass: "aspect-[3/4]",
+    span: "col-span-12 md:col-span-6",
+    mediaType: "commercial",
+    mediaTag: "✦ STREETWEAR '24",
+    likesCount: 603,
+    synopsis:
+      "A fashion lookbook campaign set within bustling neon retail districts. Heavy contrasts, chrome storefront reflections, and movement-ready silhouettes.",
+    client: "District 9 Apparel",
+    location: "Ginza, Tokyo",
+    cameraGear: "Hasselblad 907X 50C · 45mm f/4",
+    quote: "A vision of urban streetwear that feels both futuristic and timeless.",
+    quoteAuthor: "Highsnobiety Feature",
   },
 ];
 
@@ -301,6 +465,7 @@ export interface VisualDesignItem {
   year: string;
   tags: string[];
   description: string;
+  link?: string;
 }
 
 export const VISUAL_DESIGNS: VisualDesignItem[] = [

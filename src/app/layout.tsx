@@ -43,6 +43,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { PortfolioDataProvider } from "@/context/PortfolioDataContext";
+
 export default function RootLayout({
   children,
 }: {
@@ -58,7 +60,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=Orbitron:wght@700;800;900&family=Syncopate:wght@700&display=swap"
           rel="stylesheet"
         />
       </head>
@@ -66,7 +68,9 @@ export default function RootLayout({
         style={{ fontFamily: "'Manrope', 'Inter', -apple-system, sans-serif" }}
         className="antialiased bg-[#E8E5DA] text-[#22221F] min-h-screen selection:bg-[#596637] selection:text-[#F2F0E8]"
       >
-        {children}
+        <PortfolioDataProvider>
+          {children}
+        </PortfolioDataProvider>
       </body>
     </html>
   );
