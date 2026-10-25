@@ -62,6 +62,17 @@ export default function VisualDesigns() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [total]);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Calculate 3D transformation for each card
   const getCardStyle = (index: number) => {
     let offset = index - activeIndex;
@@ -75,7 +86,32 @@ export default function VisualDesigns() {
 
     const isActive = offset === 0;
     const isAbsOffset1 = Math.abs(offset) === 1;
-    const isAbsOffset2 = Math.abs(offset) === 2;
+
+    // Mobile-optimized coverflow: Active card centered, neighbors peek softly, others hidden
+    if (isMobile) {
+      if (Math.abs(offset) > 1) {
+        return {
+          transform: `translateX(${offset * 120}%) scale(0.6)`,
+          opacity: 0,
+          zIndex: 0,
+          pointerEvents: "none" as const,
+        };
+      }
+
+      const translateX = offset * 210;
+      const rotateY = offset * -15;
+      const translateZ = -Math.abs(offset) * 50;
+      const scale = isActive ? 1 : 0.85;
+      const opacity = isActive ? 1 : 0.35;
+      const zIndex = 20 - Math.abs(offset) * 5;
+
+      return {
+        transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
+        opacity,
+        zIndex,
+        cursor: "pointer",
+      };
+    }
 
     if (Math.abs(offset) > 2) {
       return {
@@ -139,28 +175,30 @@ export default function VisualDesigns() {
           </span>
         </div>
 
-        {/* Sub-bar Category Ticker */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-5 text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#77766F] uppercase pt-2 pb-3 sm:pb-4 border-b border-[#D3D0C6] w-full max-w-3xl mb-3 sm:mb-5">
-          <span className="hover:text-[#596637] transition-colors cursor-default">BRAND KITS</span>
-          <span className="text-[#596637]">•</span>
-          <span className="hover:text-[#596637] transition-colors cursor-default">THUMBNAILS</span>
-          <span className="text-[#596637]">•</span>
-          <span className="hover:text-[#596637] transition-colors cursor-default">SOCIAL MEDIA</span>
-          <span className="text-[#596637]">•</span>
-          <span className="hover:text-[#596637] transition-colors cursor-default">POSTERS</span>
-          <span className="text-[#596637]">•</span>
-          <span className="hover:text-[#596637] transition-colors cursor-default">KEY VISUALS</span>
+        {/* Sub-bar Category Ticker: Clean 1-line ticker on mobile without awkward line wraps */}
+        <div className="w-full max-w-3xl mb-3 sm:mb-5 pt-1.5 pb-2.5 sm:pb-4 border-b border-[#D3D0C6] overflow-x-auto no-scrollbar">
+          <div className="flex items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-xs font-mono tracking-[0.15em] sm:tracking-[0.2em] text-[#77766F] uppercase whitespace-nowrap min-w-max mx-auto px-2">
+            <span className="hover:text-[#596637] transition-colors cursor-default">BRAND KITS</span>
+            <span className="text-[#596637]">•</span>
+            <span className="hover:text-[#596637] transition-colors cursor-default">THUMBNAILS</span>
+            <span className="text-[#596637]">•</span>
+            <span className="hover:text-[#596637] transition-colors cursor-default">SOCIAL MEDIA</span>
+            <span className="text-[#596637]">•</span>
+            <span className="hover:text-[#596637] transition-colors cursor-default">POSTERS</span>
+            <span className="text-[#596637]">•</span>
+            <span className="hover:text-[#596637] transition-colors cursor-default">KEY VISUALS</span>
+          </div>
         </div>
 
         {/* 3D Coverflow Carousel Stage */}
         <div
-          className="relative w-full h-[310px] sm:h-[360px] md:h-[400px] flex items-center justify-center perspective-[1200px]"
+          className="relative w-full h-[280px] sm:h-[350px] md:h-[400px] flex items-center justify-center perspective-[1200px]"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="relative w-full max-w-[500px] h-[250px] sm:h-[290px] md:h-[320px] flex items-center justify-center">
+          <div className="relative w-full max-w-[500px] h-[220px] sm:h-[280px] md:h-[320px] flex items-center justify-center">
             {visualDesigns.map((item, index) => {
               const isActive = index === activeIndex;
               const cardStyle = getCardStyle(index);
@@ -176,7 +214,7 @@ export default function VisualDesigns() {
                     }
                   }}
                   style={cardStyle}
-                  className={`absolute w-[290px] sm:w-[380px] md:w-[460px] h-[190px] sm:h-[240px] md:h-[280px] rounded-2xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] select-none ${
+                  className={`absolute w-[86vw] max-w-[320px] sm:max-w-none sm:w-[380px] md:w-[460px] h-[195px] sm:h-[240px] md:h-[280px] rounded-2xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] select-none ${
                     isActive
                       ? "ring-2 ring-[#596637] shadow-[0_16px_40px_rgba(89,102,55,0.28)]"
                       : "ring-1 ring-[#D3D0C6] shadow-sm hover:ring-[#77766F]"
@@ -237,44 +275,65 @@ export default function VisualDesigns() {
             })}
           </div>
 
-          {/* Left Arrow Button */}
+          {/* Left Arrow Button (Desktop only - avoids covering photos on mobile) */}
           <button
             onClick={prevSlide}
             aria-label="Previous slide"
-            className="absolute left-2 sm:left-6 md:left-12 lg:left-16 z-30 p-2.5 sm:p-3 rounded-full bg-[#F2F0E8] hover:bg-[#596637] hover:text-[#F2F0E8] text-[#22221F] border border-[#D3D0C6] shadow-md transition-all backdrop-blur-sm focus:outline-none"
+            className="hidden sm:flex absolute left-2 sm:left-4 md:left-8 lg:left-14 z-30 p-2.5 sm:p-3 rounded-full bg-[#F2F0E8] hover:bg-[#596637] hover:text-[#F2F0E8] text-[#22221F] border border-[#D3D0C6] shadow-md transition-all backdrop-blur-sm focus:outline-none"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
 
-          {/* Right Arrow Button */}
+          {/* Right Arrow Button (Desktop only - avoids covering photos on mobile) */}
           <button
             onClick={nextSlide}
             aria-label="Next slide"
-            className="absolute right-2 sm:right-6 md:right-12 lg:right-16 z-30 p-2.5 sm:p-3 rounded-full bg-[#F2F0E8] hover:bg-[#596637] hover:text-[#F2F0E8] text-[#22221F] border border-[#D3D0C6] shadow-md transition-all backdrop-blur-sm focus:outline-none"
+            className="hidden sm:flex absolute right-2 sm:right-4 md:right-8 lg:right-14 z-30 p-2.5 sm:p-3 rounded-full bg-[#F2F0E8] hover:bg-[#596637] hover:text-[#F2F0E8] text-[#22221F] border border-[#D3D0C6] shadow-md transition-all backdrop-blur-sm focus:outline-none"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Carousel Slide Indicators & Hint */}
-        <div className="mt-4 sm:mt-6 flex flex-col items-center gap-2">
-          <div className="flex items-center gap-2">
-            {visualDesigns.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveIndex(idx)}
-                aria-label={`Go to slide ${idx + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-500 ease-out cursor-pointer ${
-                  idx === activeIndex
-                    ? "w-8 bg-[#596637]"
-                    : "w-2 bg-[#D3D0C6] hover:bg-[#77766F]"
-                }`}
-              />
-            ))}
+        {/* Carousel Slide Indicators & Mobile Navigation Controls */}
+        <div className="mt-4 sm:mt-6 flex flex-col items-center gap-2.5 w-full">
+          <div className="flex items-center justify-center gap-3 sm:gap-6">
+            {/* Mobile Prev Arrow */}
+            <button
+              onClick={prevSlide}
+              aria-label="Previous slide"
+              className="sm:hidden p-2 rounded-full bg-[#F2F0E8] text-[#22221F] hover:bg-[#596637] hover:text-[#F2F0E8] border border-[#D3D0C6] shadow-xs active:scale-95 transition-all"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {/* Dot Indicators */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {visualDesigns.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveIndex(idx)}
+                  aria-label={`Go to slide ${idx + 1}`}
+                  className={`h-1.5 rounded-full transition-all duration-500 ease-out cursor-pointer ${
+                    idx === activeIndex
+                      ? "w-7 sm:w-8 bg-[#596637]"
+                      : "w-2 bg-[#D3D0C6] hover:bg-[#77766F]"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Mobile Next Arrow */}
+            <button
+              onClick={nextSlide}
+              aria-label="Next slide"
+              className="sm:hidden p-2 rounded-full bg-[#F2F0E8] text-[#22221F] hover:bg-[#596637] hover:text-[#F2F0E8] border border-[#D3D0C6] shadow-xs active:scale-95 transition-all"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
 
-          <p className="text-[11px] font-mono tracking-widest text-[#77766F] uppercase">
-            Click center card or arrows to explore case studies
+          <p className="text-[10px] sm:text-[11px] font-mono tracking-widest text-[#77766F] uppercase text-center px-4">
+            Swipe or tap card to view full project
           </p>
         </div>
       </div>

@@ -15,14 +15,14 @@ export default function SelectedWork() {
   return (
     <section
       id="work"
-      className="w-full h-auto lg:h-screen lg:max-h-screen py-4 sm:py-5 px-4 sm:px-8 md:px-12 bg-[#E8E5DA] flex flex-col justify-between border-b border-[#D3D0C6] overflow-hidden"
+      className="w-full h-auto lg:h-screen lg:max-h-screen py-5 sm:py-6 lg:py-5 px-4 sm:px-8 md:px-12 bg-[#E8E5DA] flex flex-col justify-between border-b border-[#D3D0C6] overflow-visible lg:overflow-hidden"
     >
       <div className="max-w-7xl mx-auto w-full h-full flex flex-col justify-between">
         {/* Compact Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#D3D0C6] shrink-0">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pb-3 border-b border-[#D3D0C6] shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
             <span className="w-2 h-2 rounded-full bg-[#596637] animate-pulse shrink-0" />
-            <h2 className="select-none flex items-center gap-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-sans font-black tracking-tight leading-none">
+            <h2 className="select-none flex flex-wrap items-center gap-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-sans font-black tracking-tight leading-none">
               <span className="text-[#22221F] uppercase">STORIES</span>
               <span
                 className="uppercase transition-all duration-300"
@@ -40,28 +40,35 @@ export default function SelectedWork() {
             </span>
           </div>
 
-          <div className="text-[11px] font-mono tracking-wider uppercase text-[#77766F] flex items-center gap-2">
+          <div className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase text-[#77766F] flex items-center gap-2 self-start sm:self-auto">
             <span>VISUAL ARCHIVE</span>
-            <span>·</span>
+            <span className="text-[#596637]">·</span>
             <span>{projects.length} FRAMES</span>
           </div>
         </div>
 
-        {/* 1-Screen Pure-Image Mixed-Height Masonry Feed Container */}
-        <div className="flex-1 min-h-0 my-3 overflow-y-auto pr-1 sm:pr-2 scrollbar-thin">
+        {/* Masonry Feed: Natural page scroll on mobile, 1-screen scrollable on desktop */}
+        <div className="flex-1 min-h-0 my-3 lg:overflow-y-auto pr-0 sm:pr-1 lg:pr-2 scrollbar-thin">
           <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 sm:gap-4 [column-fill:_balance]">
-            {projects.map((project, index) => (
-              <div
-                key={project.id}
-                onClick={() => setSelectedProject(project)}
-                className="break-inside-avoid mb-3 sm:mb-4 group cursor-pointer"
-              >
-                {/* Pure Media Container (Video or Photo) with Mixed Aspect Ratios */}
+            {projects.map((project, index) => {
+              // Responsive aspect ratio: well-balanced on mobile, editorial variety on desktop
+              const aspectClass =
+                project.aspect === "landscape"
+                  ? "aspect-[4/3] sm:aspect-[16/10]"
+                  : project.aspect === "tall"
+                  ? "aspect-[3/4] sm:aspect-[9/13]"
+                  : project.aspectRatioClass || "aspect-[3/4]";
+
+              return (
                 <div
-                  className={`relative w-full ${
-                    project.aspectRatioClass || "aspect-[4/3]"
-                  } rounded-xl sm:rounded-2xl overflow-hidden bg-[#D5D0C3] border border-[#D3D0C6] transition-all duration-400 group-hover:border-[#596637] group-hover:shadow-xl group-hover:-translate-y-0.5`}
+                  key={project.id}
+                  onClick={() => setSelectedProject(project)}
+                  className="break-inside-avoid mb-3 sm:mb-4 group cursor-pointer"
                 >
+                  {/* Pure Media Container (Video or Photo) */}
+                  <div
+                    className={`relative w-full ${aspectClass} rounded-xl sm:rounded-2xl overflow-hidden bg-[#D5D0C3] border border-[#D3D0C6] transition-all duration-400 group-hover:border-[#596637] group-hover:shadow-xl group-hover:-translate-y-0.5`}
+                  >
                   {project.video ? (
                     <video
                       src={project.video}
@@ -116,7 +123,8 @@ export default function SelectedWork() {
                   </div>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
         </div>
 

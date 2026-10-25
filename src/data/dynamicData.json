@@ -78,7 +78,7 @@
       "aspect": "portrait",
       "aspectRatioClass": "aspect-[3/4]",
       "span": "col-span-12 md:col-span-4",
-      "mediaType": "portrait",
+      "mediaType": "film",
       "mediaTag": "📷 HASSELBLAD 100MP",
       "likesCount": 528,
       "synopsis": "A minimalist studio exploration of natural light and raw expression. Stripping away heavy styling to let human vulnerability and the eyes take center stage.",
@@ -86,7 +86,8 @@
       "location": "Mumbai, India",
       "cameraGear": "Hasselblad X2D 100C · 80mm f/1.9",
       "quote": "A masterclass in restraint, quiet emotion, and honest lighting.",
-      "quoteAuthor": "Vogue India Contributor"
+      "quoteAuthor": "Vogue India Contributor",
+      "video": "/uploads/1792955449661-Swami-Pardesh-Suraj-SnapYT.App.mp4"
     },
     {
       "id": "the-art-of-motion",
@@ -116,7 +117,7 @@
       "year": "2024",
       "filter": "films",
       "image": "/images/designs/thumb-drift.jpg",
-      "video": "/videos/bike-motion.mp4",
+      "video": "/uploads/1792955460440-Swami-Pardesh-Suraj-SnapYT.App.mp4",
       "aspect": "landscape",
       "aspectRatioClass": "aspect-[16/9]",
       "span": "col-span-12 md:col-span-7",
@@ -181,7 +182,7 @@
       "aspect": "portrait",
       "aspectRatioClass": "aspect-[3/4]",
       "span": "col-span-12 md:col-span-5",
-      "mediaType": "commercial",
+      "mediaType": "film",
       "mediaTag": "☕ LIFESTYLE ESSAY",
       "likesCount": 521,
       "synopsis": "A visual ode to slow drip espresso and handcrafted ceramic vessels in Higashiyama. Warm amber tones highlighting morning steam and single-origin roast textures.",
@@ -189,7 +190,8 @@
       "location": "Kyoto, Japan",
       "cameraGear": "Leica M11 · Summilux 50mm f/1.4",
       "quote": "Every frame makes you taste the quiet reverence of the first cup.",
-      "quoteAuthor": "Specialty Coffee Magazine"
+      "quoteAuthor": "Specialty Coffee Magazine",
+      "video": "/uploads/1792955470693-Swami-Pardesh-Suraj-SnapYT.App.mp4"
     },
     {
       "id": "moments-unscripted",
@@ -251,28 +253,6 @@
       "cameraGear": "Sony A1 · FE 85mm f/1.4 GM",
       "quote": "Unpretentious, deeply genuine, and luminous.",
       "quoteAuthor": "Elle Editorial Review"
-    },
-    {
-      "id": "coastal-solitude",
-      "title": "Tides & Monoliths",
-      "category": "Cinematic Film",
-      "year": "2023",
-      "filter": "films",
-      "image": "/images/designs/thumb-pattaya.jpg",
-      "video": "/videos/cinematic-reel.mp4",
-      "aspect": "landscape",
-      "aspectRatioClass": "aspect-[16/9]",
-      "span": "col-span-12 md:col-span-6",
-      "mediaType": "film",
-      "mediaTag": "▶ ANAMORPHIC · 04:10",
-      "duration": "04:10",
-      "likesCount": 562,
-      "synopsis": "A visual exploration of coastal geography where limestone cliffs plunge into tropical turquoise surf. Atmospheric drone sequences juxtaposed with handheld macro surf swells.",
-      "client": "Terra Incognita Docs",
-      "location": "Andaman Coastline",
-      "cameraGear": "DJI Inspire 3 · Zenmuse X9-8K Air",
-      "quote": "Grandeur and tranquility woven into one seamless movement.",
-      "quoteAuthor": "Cinematography World"
     },
     {
       "id": "metropolis-silhouettes",
@@ -504,5 +484,5 @@
       "status": "new"
     }
   ],
-  "updatedAt": "2026-10-25T18:49:50.265Z"
+  "updatedAt": "2026-10-25T19:12:54.364Z"
 }
